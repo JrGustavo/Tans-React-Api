@@ -1,42 +1,36 @@
-import {useQuery} from "@tanstack/react-query";
-import {sleep} from "../../helpers";
-
-
-const getLabels = async(): Promise<unknown[]> => {
-
-    await sleep(1500);
-    const response = await fetch('https://github.com/facebook/react/issues')
-        .then( r => r.json())
-
-}
-
-
-
-
-
+import {UseLabels} from "../hooks";
+import {LoadingSpinner} from "../../shared";
 
 export const LabelPicker = () => {
 
-    const labelsQuery = useQuery({
-        queryKey: ['labels'],
-        queryFn:  getLabels,
-    })
+    const {labelsQuery} = UseLabels();
+
+
 
     if (labelsQuery.isLoading) {
         return (
-            <div className="flex- justify-center items-center h-52">Loading...</div>
+            <div className="flex- justify-center items-center h-52">
+                <LoadingSpinner/>
+            </div>
         )
     }
 
-
   return (
-    <>
-      <span
-        className="px-2 py-1 rounded-full text-xs font-semibold hover:bg-slate-800 cursor-pointer"
-        style={{ border: `1px solid #ffccd3`, color: '#ffccd3' }}
-      >
+    <div className="flex flex-wrap ga`-2 justify-center">
+        {
+            labelsQuery.data?.map(label => (
+                <span
+                    key={label.id}
+                    className="animate.fadeIn  px-2 py-1 rounded-full text-xs font-semibold hover:bg-slate-800 cursor-pointer text-white"
+                    style={{border: `1px solid #${label.color}` }}
+                >
+                    {label.name}
         Primary
       </span>
-    </>
+            ))
+
+        }
+
+    </div>
   );
 };
